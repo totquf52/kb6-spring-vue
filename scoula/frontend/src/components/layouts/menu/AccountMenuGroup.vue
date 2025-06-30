@@ -1,22 +1,26 @@
 <script setup>
 import { computed } from 'vue';
 import MenuItem from './MenuItem.vue';
-import AccountMenuItem from './AccountMenuItem.vue';
+import { useAuthStore } from '@/stores/auth.js'; // 인증 상태를 관리하는 Pinia 스토어
+
 import LogoutMenuItem from './LogoutMenuItem.vue';
 import config from '@/config';
 
-// 로그인/회원가입 메뉴 설정 가져오기
+// config 객체에서 로그인/회원가입 메뉴 정보 추출
 const { login, join } = config.accoutMenus;
 
-// 임시 데이터 (실제 로그인 연동 전용)
-const islogin = computed(() => false); // 로그인 여부
-const username = computed(() => ''); // 사용자명
+// 인증 스토어 사용
+const auth = useAuthStore();
+
+// 로그인 여부 및 사용자 이름을 반응형으로 사용
+const isLogin = computed(() => auth.isLogin);
+const username = computed(() => auth.username);
 </script>
 
 <template>
   <ul class="navbar-nav ms-auto">
     <!-- 로그인한 경우: 사용자 정보 + 로그아웃 버튼 -->
-    <template v-if="islogin">
+    <template v-if="isLogin">
       <AccountMenuItem :username="username" />
       <LogoutMenuItem />
     </template>

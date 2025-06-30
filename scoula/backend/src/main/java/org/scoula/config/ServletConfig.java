@@ -5,14 +5,13 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.web.multipart.MultipartResolver;
 import org.springframework.web.multipart.support.StandardServletMultipartResolver;
 import org.springframework.web.servlet.config.annotation.*;
-import org.springframework.web.servlet.view.InternalResourceViewResolver;
-import org.springframework.web.servlet.view.JstlView;
 
 @EnableWebMvc // Spring MVC 기능 활성화
 @ComponentScan(basePackages = {
         "org.scoula.exception",
         "org.scoula.controller",
-        "org.scoula.board.controller"
+        "org.scoula.board.controller",
+        "org.scoula.member.controller"
 })
 public class ServletConfig implements WebMvcConfigurer {
 

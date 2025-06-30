@@ -1,17 +1,22 @@
-<!-- components/layouts/menu/LogoutMenuItem.vue -->
 <script setup>
-import { useRouter } from 'vue-router';
+import { useRouter } from 'vue-router'; // 라우터 객체 사용
+import { useAuthStore } from '@/stores/auth'; // 인증 상태를 관리하는 Pinia 스토어
 
+// 인증 스토어 인스턴스 가져오기
+const store = useAuthStore();
+
+// 라우터 객체 생성
 const router = useRouter();
 
+// 로그아웃 함수 정의
 const logout = (e) => {
-  // 로그아웃 처리 로직 (토큰 삭제 등 추가 가능)
-  router.push('/'); // 메인 페이지로 이동
+  // 인증 상태 초기화
+  store.logout();
+  router.push('/');
 };
 </script>
 
 <template>
-  <!-- prevent 수식어로 a 태그 기본 동작 방지 -->
   <a href="#" class="nav-link" @click.prevent="logout">
     <i class="fa-solid fa-right-from-bracket"></i>
     로그아웃

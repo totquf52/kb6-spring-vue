@@ -2,6 +2,9 @@
 <script setup>
 import { reactive, computed } from 'vue';
 import config from '@/config';
+// 하위 메뉴 컴포넌트 import
+import MenuGroup from './menu/MenuGroup.vue';
+import AccountMenuGroup from './menu/AccountMenuGroup.vue';
 
 // 네비게이션 상태 (토글 버튼 눌렀는지 여부)
 let state = reactive({ isNavShow: false });
@@ -38,7 +41,6 @@ const toggleNavShow = () => (state.isNavShow = !state.isNavShow);
         <span class="navbar-toggler-icon"></span>
       </button>
 
-      <!-- 펼쳐지는 네비게이션 메뉴 -->
       <div :class="navClass" id="collapsibleNavbar">
         <!-- 일반 메뉴 그룹 -->
         <MenuGroup :menus="config.menus" />

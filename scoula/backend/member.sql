@@ -51,3 +51,5 @@ FROM tbl_member m
          LEFT OUTER JOIN tbl_member_auth a
                          ON m.username = a.username
 WHERE m.username = 'admin';
+
+SELECT * FROM tbl_member WHERE username = 'admin';
