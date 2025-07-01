@@ -59,6 +59,12 @@ export const useAuthStore = defineStore('auth', () => {
     }
   };
 
+  // 사용자 이메일 정보를 업데이트하고 로컬스토리지에 반영
+  const changeProfile = (member) => {
+    state.value.user.email = member.email;
+    localStorage.setItem('auth', JSON.stringify(state.value));
+  };
+
   load(); // 컴포넌트 마운트 시 호출
 
   // 외부에서 사용할 항목들 반환
@@ -67,6 +73,7 @@ export const useAuthStore = defineStore('auth', () => {
     username,
     email,
     isLogin,
+    changeProfile,
     login,
     logout,
     getToken,

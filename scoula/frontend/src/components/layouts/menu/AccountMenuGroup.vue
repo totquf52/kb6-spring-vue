@@ -2,7 +2,7 @@
 import { computed } from 'vue';
 import MenuItem from './MenuItem.vue';
 import { useAuthStore } from '@/stores/auth.js'; // 인증 상태를 관리하는 Pinia 스토어
-
+import AccountMenuItem from './AccountMenuItem.vue';
 import LogoutMenuItem from './LogoutMenuItem.vue';
 import config from '@/config';
 

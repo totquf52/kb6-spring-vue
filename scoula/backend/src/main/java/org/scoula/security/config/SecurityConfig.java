@@ -88,7 +88,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         web.ignoring().antMatchers(
                 "/assets/**",   // 정적 리소스
                 "/*",           // 루트 경로
-                "/api/member/**", // 회원 가입 등 비인증 API
 
                 // Swagger 관련 리소스 보안 제외
                 "/swagger-ui.html",
@@ -117,7 +116,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .accessDeniedHandler(accessDeniedHandler);          // 권한 부족 사용자 처리
         http
                 .authorizeRequests()
-                .antMatchers(HttpMethod.OPTIONS).permitAll()  // Preflight 요청 허용
+                .antMatchers(HttpMethod.OPTIONS).permitAll()
+                .antMatchers(HttpMethod.POST, "/api/member").permitAll()
+                .antMatchers(HttpMethod.PUT, "/api/member/*", "/api/member/*/changepassword").authenticated()
                 .anyRequest().permitAll()                    // 👉 일단 모든 요청 허용 (테스트용)
 
                 .and().httpBasic().disable()    // 기본 HTTP 인증 비활성화

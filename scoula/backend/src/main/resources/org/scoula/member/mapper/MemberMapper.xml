@@ -48,4 +48,19 @@
         VALUES (#{username}, #{auth})
     </insert>
 
+    <update id="update">
+        UPDATE tbl_member
+        SET
+        email = #{email},              <!-- 전달받은 email 값으로 업데이트 -->
+        update_date = now()           <!-- 현재 시간으로 수정일 갱신 -->
+        WHERE username = #{username}      <!-- username 조건에 맞는 회원만 수정 -->
+    </update>
+
+    <update id="updatePassword">
+        UPDATE tbl_member
+        SET
+        password = #{newPassword},     <!-- 새 비밀번호로 갱신 -->
+        update_date = now()            <!-- 수정일 갱신 -->
+        WHERE username = #{username}       <!-- 대상 회원 지정 -->
+    </update>
 </mapper>

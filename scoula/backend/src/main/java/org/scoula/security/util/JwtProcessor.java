@@ -12,7 +12,7 @@ import java.util.Date;
 public class JwtProcessor {
 
     // JWT 유효 시간: 5분 (단위: 밀리초)
-    private static final long TOKEN_VALID_MILLISECOND = 1000L * 60 * 5;
+    private static final long TOKEN_VALID_MILLISECOND = 1000L * 60 * 30;
 
     // 비밀 키 문자열 (운영 시 더 복잡하고 충분히 길게 설정해야 안전)
     private String secretKey = "충분히 긴 임의의(랜덤한) 비밀키 문자열 배정 ";
