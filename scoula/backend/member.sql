@@ -53,3 +53,23 @@ FROM tbl_member m
 WHERE m.username = 'admin';
 
 SELECT * FROM tbl_member WHERE username = 'admin';
+
+-- 📌 첨부파일 테이블 삭제 후 재생성
+-- 게시글 삭제 시 첨부파일도 자동 삭제되도록 ON DELETE CASCADE 설정
+
+DROP TABLE IF EXISTS tbl_board_attachment;
+
+CREATE TABLE tbl_board_attachment (
+                                      no           INTEGER AUTO_INCREMENT PRIMARY KEY,       -- PK, 첨부파일 번호
+                                      filename     VARCHAR(256) NOT NULL,                    -- 원본 파일명
+                                      path         VARCHAR(256) NOT NULL,                    -- 서버 저장 경로
+                                      content_type VARCHAR(56),                              -- 파일의 Content-Type
+                                      size         INTEGER,                                  -- 파일 크기 (byte)
+                                      bno          INTEGER NOT NULL,                         -- 게시글 번호 (FK)
+                                      reg_date     DATETIME DEFAULT now(),                   -- 등록일자 (기본값: 현재 시간)
+
+    -- 외래 키 제약: 게시글 삭제 시 첨부파일도 함께 삭제
+                                      CONSTRAINT FOREIGN KEY (bno)
+                                          REFERENCES tbl_board(no)
+                                          ON DELETE CASCADE
+);

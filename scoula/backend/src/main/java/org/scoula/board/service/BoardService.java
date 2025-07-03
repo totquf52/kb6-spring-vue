@@ -2,6 +2,8 @@ package org.scoula.board.service;
 
 import org.scoula.board.domain.BoardAttachmentVO;
 import org.scoula.board.dto.BoardDTO;
+import org.scoula.common.pagination.Page;
+import org.scoula.common.pagination.PageRequest;
 
 import java.util.List;
 
@@ -10,6 +12,8 @@ import java.util.List;
  * → Controller와 Mapper 사이에서 비즈니스 로직을 수행하는 계층
  */
 public interface BoardService {
+    // 페이지 요청에 따라 BoardDTO 목록을 포함한 Page 객체 반환
+    Page<BoardDTO> getPage(PageRequest pageRequest);
 
     // 전체 목록 조회
     public List<BoardDTO> getList();

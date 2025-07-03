@@ -2,38 +2,27 @@ package org.scoula.board.mapper;
 
 import org.scoula.board.domain.BoardAttachmentVO;
 import org.scoula.board.domain.BoardVO;
+import org.scoula.common.pagination.PageRequest;
 
 import java.util.List;
 
-/**
- * 📌 게시글 목록을 DB에서 가져오는 Mapper 인터페이스
- */
 public interface BoardMapper {
+    // 전체 게시글 수 조회 (페이징 전체 페이지 수 계산용)
+    int getTotalCount();
 
-    // 게시글 전체 조회
-    public List<BoardVO> getList();
+    // 페이징 처리된 게시글 목록 조회
+    List<BoardVO> getPage(PageRequest pageRequest);
 
-    // 게시글 번호로 단건 조회
-    public BoardVO get(Long no);
+    // 📝 게시글 관련 기능
+    List<BoardVO> getList();               // 전체 게시글 목록 조회
+    BoardVO get(Long no);                  // 특정 게시글 조회
+    void create(BoardVO board);            // 게시글 등록
+    int update(BoardVO board);             // 게시글 수정
+    int delete(Long no);                   // 게시글 삭제
 
-    // 게시글 등록
-    public void create(BoardVO board);
-
-    // 게시글 수정 (제목, 내용만 수정 가능)
-    public int update(BoardVO board);
-
-    // 게시글 삭제 (PK 기준 삭제)
-    public int delete(Long no);
-
-    // 파일 생성
-    public void createAttachment(BoardAttachmentVO attach);
-
-    // 해당 게시글의 파일 목록 조회
-    public List<BoardAttachmentVO> getAttachmentList(Long bno);
-
-    // 특정 파일 조회
-    public BoardAttachmentVO getAttachment(Long no);
-
-    // 특정 파일 삭제
-    public int deleteAttachment(Long no);
+    // 📎 첨부파일 관련 기능
+    void createAttachment(BoardAttachmentVO attach);         // 첨부파일 등록
+    List<BoardAttachmentVO> getAttachmentList(Long bno);     // 게시글 번호로 첨부파일 목록 조회
+    BoardAttachmentVO getAttachment(Long no);                // 첨부파일 번호로 단일 조회
+    int deleteAttachment(Long no);                           // 첨부파일 삭제
 }

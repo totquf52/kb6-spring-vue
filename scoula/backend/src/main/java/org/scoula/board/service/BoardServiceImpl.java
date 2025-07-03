@@ -6,6 +6,8 @@ import org.scoula.board.domain.BoardAttachmentVO;
 import org.scoula.board.domain.BoardVO;
 import org.scoula.board.dto.BoardDTO;
 import org.scoula.board.mapper.BoardMapper;
+import org.scoula.common.pagination.Page;
+import org.scoula.common.pagination.PageRequest;
 import org.scoula.common.util.UploadFiles;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -20,86 +22,122 @@ import java.util.Optional;
 @Service
 @RequiredArgsConstructor
 public class BoardServiceImpl implements BoardService {
-    private final static String BASE_DIR = "c:/upload/board";
-    final private BoardMapper mapper;
 
+    private final static String BASE_DIR = "c:/upload/board";
+    private final BoardMapper mapper;
+
+    @Override
+    public Page<BoardDTO> getPage(PageRequest pageRequest) {
+
+        // 페이징된 게시글 목록 조회 (BoardVO)
+        List<BoardVO> boards = mapper.getPage(pageRequest);
+
+        // 전체 게시글 수 조회
+        int totalCount = mapper.getTotalCount();
+
+        // BoardVO → BoardDTO 변환
+        List<BoardDTO> dtoList = boards.stream()
+                .map(BoardDTO::of) // VO → DTO 변환 메서드
+                .toList();
+
+        // Page 객체 생성 및 반환
+        return Page.of(pageRequest, totalCount, dtoList);
+    }
+
+    // 전체 게시글 목록 조회
     @Override
     public List<BoardDTO> getList() {
-        log.info("getList.........");
-
-        // mapper에서 VO 목록 받은 후, DTO 변환시킨 전체목록 반환
-        return mapper.getList().stream().map(BoardDTO::of).toList();
+        log.info("getList..........");
+        return mapper.getList().stream()
+                .map(BoardDTO::of)
+                .toList();
     }
 
+    // 게시글 단건 조회 (첨부 포함)
     @Override
     public BoardDTO get(Long no) {
-        log.info("get........." + no);
+        log.info("get......" + no);
         BoardDTO board = BoardDTO.of(mapper.get(no));
-        // 해당 게시글이 없는경우 NoSuchElementException 예외 던짐
-        return Optional.ofNullable(board).orElseThrow(NoSuchElementException::new);
+        log.info("===================" + board);
+        return Optional.ofNullable(board)
+                .orElseThrow(NoSuchElementException::new);
     }
 
-    @Transactional // 2개 이상의 insert문이 실행될수있으므로 트랜잭션 처리
+    // 게시글 등록 + 첨부파일 업로드
+    @Transactional // 게시글 + 첨부 insert 트랜잭션 처리
     @Override
     public BoardDTO create(BoardDTO board) {
-        log.info("create........." + board);
-        BoardVO vo = board.toVo(); // DTO -> VO 변환
-        mapper.create(vo);
+        log.info("create......" + board);
+
+        BoardVO boardVO = board.toVo();
+        mapper.create(boardVO); // 게시글 등록
 
         // 파일 업로드 처리
         List<MultipartFile> files = board.getFiles();
-        if(files != null && !files.isEmpty()) {
-            upload(vo.getNo(), files);
+        if (files != null && !files.isEmpty()) {
+            upload(boardVO.getNo(), files);
         }
-        return get(vo.getNo());
+
+        return get(boardVO.getNo());
     }
 
-    private void upload(Long bno, List<MultipartFile> files) {
-        for (MultipartFile file : files) {
-            if(file.isEmpty()) {continue;} // 파일이 비어있으면 다음 파일 가져오기
-            try{
-                String uploadPath = UploadFiles.upload(BASE_DIR,file);
-                BoardAttachmentVO attach = BoardAttachmentVO.of(file,bno,uploadPath);
-                mapper.createAttachment(attach);
-            }catch (IOException e){
-                throw new RuntimeException(e);
-            }
+    // 게시글 수정 + 첨부파일 업로드
+    @Override
+    public BoardDTO update(BoardDTO board) {
+        log.info("update...... " + board);
+
+        BoardVO boardVO = board.toVo();
+        log.info("update...... " + boardVO);
+        mapper.update(boardVO); // 게시글 수정
+
+        // 파일 업로드 처리
+        List<MultipartFile> files = board.getFiles();
+        if (files != null && !files.isEmpty()) {
+            upload(board.getNo(), files);
         }
+
+        return get(board.getNo());
     }
-    // 첨부파일 한 개 얻기
+
+    // 게시글 삭제
+    @Override
+    public BoardDTO delete(Long no) {
+        log.info("delete...." + no);
+
+        BoardDTO board = get(no); // 삭제 전 정보 반환용 조회
+        mapper.delete(no); // 실제 삭제
+        return board;
+    }
+
+    // 첨부파일 단건 조회
     @Override
     public BoardAttachmentVO getAttachment(Long no) {
         return mapper.getAttachment(no);
     }
-    // 첨부파일 삭제
+
+    // 첨부파일 삭제 (성공 여부 반환)
     @Override
     public boolean deleteAttachment(Long no) {
         return mapper.deleteAttachment(no) == 1;
     }
 
-    @Override
-    public BoardDTO update(BoardDTO board) {
-        log.info("update......" + board);
-        mapper.update(board.toVo());
+    // 파일 업로드 처리 (내부 전용 메서드)
+    private void upload(Long bno, List<MultipartFile> files) {
+        for (MultipartFile part : files) {
+            if (part.isEmpty()) continue;
 
-        return get(board.getNo());
-    }
+            try {
+                // 실제 파일 업로드
+                String uploadPath = UploadFiles.upload(BASE_DIR, part);
 
-    @Transactional
-    @Override
-    public BoardDTO delete(Long no) {
-        log.info("delete...." + no);
-        BoardDTO board = get(no);
+                // DB 등록용 VO 생성
+                BoardAttachmentVO attach = BoardAttachmentVO.of(part, bno, uploadPath);
+                mapper.createAttachment(attach);
 
-        // 해당 게시글의 첨부파일 목록 가져오기
-        List<BoardAttachmentVO> attachList = mapper.getAttachmentList(no);
-
-        // 첨부파일 목록 돌면서 첨부파일들 삭제
-        for (BoardAttachmentVO attach : attachList) {
-            mapper.deleteAttachment(attach.getNo());
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+                // log.error(e.getMessage());
+            }
         }
-        // 게시글 삭제
-        mapper.delete(no);
-        return board;
     }
 }

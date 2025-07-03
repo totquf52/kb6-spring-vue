@@ -119,6 +119,10 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers(HttpMethod.OPTIONS).permitAll()
                 .antMatchers(HttpMethod.POST, "/api/member").permitAll()
                 .antMatchers(HttpMethod.PUT, "/api/member/*", "/api/member/*/changepassword").authenticated()
+                // 게시글 작성(POST), 수정(PUT), 삭제(DELETE)는 인증된 사용자만 가능
+                .antMatchers(HttpMethod.POST, "/api/board/**").authenticated()
+                .antMatchers(HttpMethod.PUT, "/api/board/**").authenticated()
+                .antMatchers(HttpMethod.DELETE, "/api/board/**").authenticated()
                 .anyRequest().permitAll()                    // 👉 일단 모든 요청 허용 (테스트용)
 
                 .and().httpBasic().disable()    // 기본 HTTP 인증 비활성화

@@ -54,8 +54,9 @@
 <script setup>
 import { computed, reactive, ref } from 'vue';
 import { useAuthStore } from '@/stores/auth'; // 인증 스토어(Pinia) 호출
-import { useRouter } from 'vue-router'; // 라우터 사용
+import { useRouter, useRoute } from 'vue-router'; // 라우터 사용
 
+const cr = useRoute(); // 현재 라우트 정보 (→ 쿼리 문자열 접근용)
 const router = useRouter(); // 페이지 이동용 라우터
 const auth = useAuthStore(); // 인증 관련 상태 및 액션 사용
 
@@ -76,8 +77,14 @@ const login = async () => {
   console.log(member); // 디버깅용 출력
   try {
     await auth.login(member); // 인증 스토어의 login 액션 호출
-    console.log(auth.isLogin);
-    router.push('/'); // 로그인 성공 시 홈으로 이동
+    // 로그인 후 원래 가려던 페이지로 이동
+    if (cr.query.next) {
+      // 예: /board/create → login?next=board/create
+      router.push({ name: cr.query.next });
+    } else {
+      // 기본 홈으로 이동
+      router.push('/');
+    }
   } catch (e) {
     // 로그인 실패 처리
     console.log('에러=======', e);

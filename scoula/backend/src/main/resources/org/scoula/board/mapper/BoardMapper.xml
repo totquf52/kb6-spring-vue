@@ -4,7 +4,18 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="org.scoula.board.mapper.BoardMapper">
+    <!-- 전체 게시글 수 조회 -->
+    <select id="getTotalCount" resultType="java.lang.Integer">
+        SELECT COUNT(*) FROM tbl_board
+    </select>
 
+    <!-- 페이지별 게시글 조회 -->
+    <select id="getPage" resultType="BoardVO">
+        SELECT *
+        FROM tbl_board
+        ORDER BY no DESC
+        LIMIT #{offset}, #{amount}
+    </select>
 <!--    별칭 등록 후 BoardVO로 타입 간략화 가능-->
     <select id="getList" resultType="BoardVO">
     <![CDATA[

@@ -33,16 +33,6 @@ public class WebConfig extends AbstractAnnotationConfigDispatcherServletInitiali
         return new String[]{"/"};
     }
 
-    // 한글 POST 요청 인코딩 필터 설정
-    @Override
-    protected Filter[] getServletFilters() {
-        CharacterEncodingFilter characterEncodingFilter = new CharacterEncodingFilter();
-        characterEncodingFilter.setEncoding("UTF-8");
-        characterEncodingFilter.setForceEncoding(true);
-
-        return new Filter[]{characterEncodingFilter};
-    }
-
     @Override
     protected void customizeRegistration(ServletRegistration.Dynamic registration) {
         // 존재하지 않는 URL 요청시 404 응답이 아닌 예외 발생시킴
