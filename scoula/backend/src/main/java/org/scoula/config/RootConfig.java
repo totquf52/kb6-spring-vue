@@ -21,8 +21,8 @@ import javax.sql.DataSource;
 
 @Configuration
 @PropertySource({"classpath:/application.properties"}) // 프로퍼티 파일 로드
-@MapperScan(basePackages = {"org.scoula.board.mapper", "org.scoula.member.mapper" }) // MyBatis 매퍼 스캔
-@ComponentScan(basePackages = {"org.scoula.board.service","org.scoula.member.service"}) // 서비스 컴포넌트 스캔
+@MapperScan(basePackages = {"org.scoula.board.mapper", "org.scoula.member.mapper","org.scoula.travel.mapper" }) // MyBatis 매퍼 스캔
+@ComponentScan(basePackages = {"org.scoula.board.service","org.scoula.member.service","org.scoula.travel.service"}) // 서비스 컴포넌트 스캔
 @Log4j2
 @EnableTransactionManagement // 트랜잭션 어노테이션 활성화
 public class RootConfig {

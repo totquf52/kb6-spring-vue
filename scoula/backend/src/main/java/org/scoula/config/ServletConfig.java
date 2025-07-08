@@ -11,7 +11,8 @@ import org.springframework.web.servlet.config.annotation.*;
         "org.scoula.exception",
         "org.scoula.controller",
         "org.scoula.board.controller",
-        "org.scoula.member.controller"
+        "org.scoula.member.controller",
+        "org.scoula.travel.controller"
 })
 public class ServletConfig implements WebMvcConfigurer {
 
